@@ -1,1 +1,55 @@
+%function
+%Generate AOV_2 database
+clc;
+clear;
+path = 'D:\Circle ROI';%ROI image path
+imgpath = imageDatastore(path,'includesubfolders',true,'FileExtensions','.bmp','LabelSource','foldernames');
+imgnum = length(imgpath.Files);
+num = randperm(imgnum/5);
+template = zeros(256);  %ROI area is 256x256
+a = uint8(sqrt(10/100)*256);
+xnum = [1 1 1 2 2 2 3 3 3];
+ynum = [1 2 3 1 2 3 1 2 3];
+for p=1:9
+    for index = 1:length(num)/2
+       i = num(index);
+       num5 = randperm(5);
+       mkdir(strcat('train_II_',num2str(p),'\',num2str(i)));
+       mkdir(strcat('test_II_',num2str(p),'\',num2str(i)));
+       for ii=1:3
+          img = imread(strcat('D:\Circle ROI\',num2str(i),'\',num2str(i),'_',num2str(num5(ii)),'.bmp')); 
+          imwrite(img,strcat('train_II_',num2str(p),'\',num2str(i),'\',num2str(i),'_',num2str(num5(ii)),'.bmp'));
+       end
+       for ii=4:5
+          img = imread(strcat('D:\Circle ROI\',num2str(i),'\',num2str(i),'_',num2str(num5(ii)),'.bmp')); 
+          %area occlusion
+          x = xnum(p);
+          y = ynum(p);
+          startx = (x-1)*floor(256/3)+floor(rand()*(floor(256/3)-a))+1;
+          starty = (y-1)*floor(256/3)+floor(rand()*(floor(256/3)-a))+1;
+          img(startx:startx+a-1,starty:starty+a-1) = 0;
+          imwrite(img,strcat('test_II_',num2str(p),'\',num2str(i),'\',num2str(i),'_',num2str(num5(ii)),'.bmp'));
+       end
+    end
 
+    for index=length(num)/2+1:length(num)
+       i = num(index);
+       num5 = randperm(5); 
+       mkdir(strcat('train_II_',num2str(p),'\',num2str(i)));
+       mkdir(strcat('test_II_',num2str(p),'\',num2str(i)));
+       for ii=1:2
+          img = imread(strcat('D:\Circle ROI\',num2str(i),'\',num2str(i),'_',num2str(num5(ii)),'.bmp')); 
+          imwrite(img,strcat('train_II_',num2str(p),'\',num2str(i),'\',num2str(i),'_',num2str(num5(ii)),'.bmp'));
+       end
+       for ii=3:5
+          img = imread(strcat('D:\Circle ROI\',num2str(i),'\',num2str(i),'_',num2str(num5(ii)),'.bmp')); 
+          %area occlusion          
+          x = xnum(p);
+          y = ynum(p);
+          startx = (x-1)*floor(256/3)+floor(rand()*(floor(256/3)-a))+1;
+          starty = (y-1)*floor(256/3)+floor(rand()*(floor(256/3)-a))+1;
+          img(startx:startx+a-1,starty:starty+a-1) = 0;
+          imwrite(img,strcat('test_II_',num2str(p),'\',num2str(i),'\',num2str(i),'_',num2str(num5(ii)),'.bmp'));
+       end
+    end
+end
